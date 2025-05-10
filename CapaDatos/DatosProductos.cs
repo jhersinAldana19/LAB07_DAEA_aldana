@@ -11,16 +11,20 @@ namespace CapaDatos
 {
     public class DatosProductos
     {
-        private readonly string connectionString = "Data Source=LAB411-025\\SQLEXPRESS; Initial Catalog=facturaDB; User ID=Jhersin; Password=jhersin123; TrustServerCertificate=True;";
+        private readonly string connectionString = "Data Source=LAB411-020\\SQLEXPRESS; Initial Catalog=facturaDB; User ID=jhersin; Password=123; TrustServerCertificate=True;";
 
-        public List<Product> ObtenerProductos()
+        // Leer (Listar productos)
+        public List<Product> ObtenerProductos(int? productId = null)
         {
             var lista = new List<Product>();
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                SqlCommand command = new SqlCommand("USP_ListarProductos", connection);
+                SqlCommand command = new SqlCommand("sp_products_CRUD", connection);
                 command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@action", "READ");
+                command.Parameters.AddWithValue("@product_id", productId.HasValue ? (object)productId.Value : DBNull.Value);
 
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -31,11 +35,11 @@ namespace CapaDatos
                 {
                     lista.Add(new Product
                     {
-                        ProductId = Convert.ToInt32(reader["Product_id"]),
-                        Name = reader["Name"].ToString() ?? "",
-                        Price = Convert.ToDecimal(reader["Price"]),
-                        Stock = Convert.ToInt32(reader["Stock"]),
-                        Active = Convert.ToBoolean(reader["Active"])
+                        ProductId = Convert.ToInt32(reader["product_id"]),
+                        Name = reader["name"].ToString() ?? "",
+                        Price = Convert.ToDecimal(reader["price"]),
+                        Stock = Convert.ToInt32(reader["stock"]),
+                        Active = Convert.ToBoolean(reader["active"])
                     });
                 }
 
@@ -45,21 +49,59 @@ namespace CapaDatos
             return lista;
         }
 
+        // Crear (Registrar producto)
         public void RegistrarProducto(Product product)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                SqlCommand command = new SqlCommand("USP_InsertarProducto", connection);
+                SqlCommand command = new SqlCommand("sp_products_CRUD", connection);
                 command.CommandType = CommandType.StoredProcedure;
 
-                command.Parameters.AddWithValue("@Name", product.Name);
-                command.Parameters.AddWithValue("@Price", product.Price);
-                command.Parameters.AddWithValue("@Stock", product.Stock);
+                command.Parameters.AddWithValue("@action", "CREATE");
+                command.Parameters.AddWithValue("@name", product.Name);
+                command.Parameters.AddWithValue("@price", product.Price);
+                command.Parameters.AddWithValue("@stock", product.Stock);
+                command.Parameters.AddWithValue("@active", product.Active);
 
                 connection.Open();
                 command.ExecuteNonQuery();
             }
         }
 
+        // Actualizar producto
+        public void ActualizarProducto(Product product)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand("sp_products_CRUD", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@action", "UPDATE");
+                command.Parameters.AddWithValue("@product_id", product.ProductId);
+                command.Parameters.AddWithValue("@name", product.Name);
+                command.Parameters.AddWithValue("@price", product.Price);
+                command.Parameters.AddWithValue("@stock", product.Stock);
+                command.Parameters.AddWithValue("@active", product.Active);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+
+        // Eliminar producto (eliminación lógica)
+        public void EliminarProducto(int productId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand("sp_products_CRUD", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@action", "DELETE");
+                command.Parameters.AddWithValue("@product_id", productId);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
     }
 }

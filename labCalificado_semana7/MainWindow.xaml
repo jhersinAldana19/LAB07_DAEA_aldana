@@ -7,14 +7,45 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
-    <Grid>
-        <StackPanel Orientation="Vertical" Margin="20">
 
-            <TextBox x:Name="SearchTextBox" Width="300" Margin="0,0,0,10"  VerticalAlignment="Top"/>
+    <Grid Margin="10">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
 
-            <Button Content="Buscar" Width="100" Click="SearchButton_Click" Margin="0,0,0,20"/>
+            <TextBlock Text="Buscar producto por nombre:" FontWeight="Bold"/>
+            <TextBox x:Name="SearchTextBox" Width="300" Margin="0,0,0,5"/>
+            <Button Content="Buscar" Width="100" Click="SearchButton_Click" Margin="0,0,0,10"/>
 
-            <DataGrid x:Name="ProductsDataGrid" AutoGenerateColumns="True" Height="200" Width="750" />
+            <TextBlock Text="Nombre:" />
+            <TextBox x:Name="NameTextBox" Width="300" Margin="0,0,0,5"/>
+
+            <TextBlock Text="Precio:" />
+            <TextBox x:Name="PriceTextBox" Width="300" Margin="0,0,0,5"/>
+
+            <TextBlock Text="Stock:" />
+            <TextBox x:Name="StockTextBox" Width="300" Margin="0,0,0,10"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                <Button Content="Registrar" Width="100" Margin="5" Click="RegisterButton_Click"
+            Background="LightGreen" Foreground="Black"/>
+
+                <Button Content="Actualizar" Width="100" Margin="5" Click="UpdateButton_Click"
+            Background="LightBlue" Foreground="Black"/>
+
+                <Button Content="Eliminar" Width="100" Margin="5" Click="DeleteButton_Click"
+            Background="Tomato" Foreground="White"/>
+
+                <Button Content="Refrescar" Width="100" Margin="5" Click="RefreshButton_Click"
+            Background="Gray" Foreground="White"/>
+            </StackPanel>
+
+
+            <DataGrid x:Name="ProductsDataGrid"
+                      AutoGenerateColumns="True"
+                      Height="200"
+                      Width="750"
+                      Margin="0,10,0,0"
+                      SelectionChanged="ProductsDataGrid_SelectionChanged"/>
         </StackPanel>
     </Grid>
+    
 </Window>
